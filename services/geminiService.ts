@@ -2,15 +2,38 @@
 import { GoogleGenAI } from '@google/genai';
 import type { QuoteData, QuoteStep, Currency, TechnicalReportData } from '../types';
 
-const getAiClient = () => {
-    // Verificação segura para evitar que o app quebre se 'process' não estiver definido no navegador
-    const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
-    
-    if (!apiKey) {
-        throw new Error("A API Key não foi encontrada. Verifique se a variável de ambiente API_KEY está configurada nas configurações do Vercel.");
+// Helper function to get API Key from various sources
+const getApiKey = (): string | undefined => {
+  // 1. Check standard process.env (Node.js/AI Studio)
+  try {
+    if (typeof process !== 'undefined' && process.env?.API_KEY) {
+      return process.env.API_KEY;
     }
-    return new GoogleGenAI({ apiKey });
+  } catch (e) {
+    // Ignore error if process is undefined
+  }
+
+  // 2. Check Vite environment variable (Browser/Vercel)
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY;
+    }
+  } catch (e) {
+    // Ignore error if import.meta is undefined
+  }
+
+  return undefined;
 };
+
+const apiKey = getApiKey();
+
+if (!apiKey) {
+    throw new Error("API Key não encontrada. Por favor, configure a variável de ambiente 'VITE_API_KEY' (ou 'API_KEY') nas configurações do seu projeto no Vercel.");
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 async function fileToGenerativePart(file: File): Promise<{ inlineData: { data: string; mimeType: string; } }> {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
@@ -35,7 +58,6 @@ async function fileToGenerativePart(file: File): Promise<{ inlineData: { data: s
 
 
 export async function generateQuote(description: string, city: string, images: File[], currency: Currency, clientName: string): Promise<Omit<QuoteData, 'id' | 'date' | 'clientName' | 'clientAddress' | 'clientContact'>> {
-    const ai = getAiClient();
     const model = 'gemini-2.5-flash';
 
     const textPart = {
@@ -128,7 +150,6 @@ O JSON deve ter a seguinte estrutura:
 }
 
 export async function generateTechnicalReport(quote: QuoteData, images: File[], companyName: string): Promise<TechnicalReportData> {
-    const ai = getAiClient();
     const model = 'gemini-2.5-flash';
 
     const textPart = {
