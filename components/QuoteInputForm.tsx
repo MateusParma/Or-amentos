@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { CameraIcon, UploadIcon, GlobeIcon } from './icons';
+import { CameraIcon, UploadIcon, GlobeIcon } from './AppIcons';
 import type { Currency } from '../types';
 
 interface QuoteInputFormProps {
@@ -134,7 +134,7 @@ export const QuoteInputForm: React.FC<QuoteInputFormProps> = ({ onSubmit, isLoad
               </span>
               <p className="pl-1">ou arraste e solte</p>
             </div>
-            <p className="text-xs text-gray-500">PNG, JPG, GIF até 10MB</p>
+            <p className="text-xs text-gray-500 mt-2">PNG, JPG, GIF até 10MB</p>
           </div>
         </div>
         <input

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { QuoteData, Currency } from '../types';
-import { PencilIcon, TrashIcon, EyeIcon } from './icons';
+import { PencilIcon, TrashIcon, EyeIcon } from './AppIcons';
 
 interface QuoteHistoryProps {
   quotes: QuoteData[];

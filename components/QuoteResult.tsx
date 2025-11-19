@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { QuoteData, QuoteStep, Currency, UserSettings, TechnicalReportData } from '../types';
-import { CheckCircleIcon, PencilIcon, DownloadIcon } from './icons';
+import { CheckCircleIcon, PencilIcon, DownloadIcon } from './AppIcons';
 import { generateTechnicalReport } from '../services/geminiService';
 import { TechnicalReport } from './TechnicalReport';
 

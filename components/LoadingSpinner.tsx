@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GearsIcon } from './icons';
+import { GearsIcon } from './AppIcons';
 
 export const LoadingSpinner: React.FC = () => {
   return (
