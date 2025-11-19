@@ -175,35 +175,11 @@ const App: React.FC = () => {
         date: new Date().toISOString(),
     };
     setSavedQuotes(prev => [...prev, newQuote]);
-    
-    if (window.parent !== window) {
-        window.parent.postMessage({
-            type: 'quoteSaved',
-            quoteId: newQuote.id,
-            clientName: newQuote.clientName,
-            total: calculateTotal(newQuote),
-            currency: newQuote.currency,
-            fullQuote: newQuote
-        }, '*'); 
-    }
-
     setPage('history');
   }, []);
 
   const handleUpdateQuote = useCallback((updatedQuote: QuoteData) => {
     setSavedQuotes(prev => prev.map(q => q.id === updatedQuote.id ? updatedQuote : q));
-    
-    if (window.parent !== window) {
-        window.parent.postMessage({
-            type: 'quoteUpdated',
-            quoteId: updatedQuote.id,
-            clientName: updatedQuote.clientName,
-            total: calculateTotal(updatedQuote),
-            currency: updatedQuote.currency,
-            fullQuote: updatedQuote
-        }, '*');
-    }
-
     setPage('history');
   }, []);
   
