@@ -2,11 +2,15 @@
 import { GoogleGenAI } from '@google/genai';
 import type { QuoteData, QuoteStep, Currency, TechnicalReportData } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAiClient = () => {
+    // Verificação segura para evitar que o app quebre se 'process' não estiver definido no navegador
+    const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
+    
+    if (!apiKey) {
+        throw new Error("A API Key não foi encontrada. Verifique se a variável de ambiente API_KEY está configurada nas configurações do Vercel.");
+    }
+    return new GoogleGenAI({ apiKey });
+};
 
 async function fileToGenerativePart(file: File): Promise<{ inlineData: { data: string; mimeType: string; } }> {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
@@ -31,6 +35,7 @@ async function fileToGenerativePart(file: File): Promise<{ inlineData: { data: s
 
 
 export async function generateQuote(description: string, city: string, images: File[], currency: Currency, clientName: string): Promise<Omit<QuoteData, 'id' | 'date' | 'clientName' | 'clientAddress' | 'clientContact'>> {
+    const ai = getAiClient();
     const model = 'gemini-2.5-flash';
 
     const textPart = {
@@ -123,6 +128,7 @@ O JSON deve ter a seguinte estrutura:
 }
 
 export async function generateTechnicalReport(quote: QuoteData, images: File[], companyName: string): Promise<TechnicalReportData> {
+    const ai = getAiClient();
     const model = 'gemini-2.5-flash';
 
     const textPart = {
